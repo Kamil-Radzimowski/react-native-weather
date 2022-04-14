@@ -6,106 +6,100 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import type {Node} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
+  ActivityIndicator,
   StyleSheet,
   Text,
   useColorScheme,
   View,
 } from 'react-native';
+import RNLocation from 'react-native-location';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const App: () => Node = () => {
+  const colorScheme = useColorScheme();
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [locationData, setLocationData] = useState({});
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
+  useEffect(() => {
+    const permissionHandler = async () => {
+      await RNLocation.configure({
+        distanceFilter: 0.0,
+      });
+
+      let permission = await RNLocation.checkPermission({
+        ios: 'whenInUse', // or 'always'
+        android: {
+          detail: 'coarse', // or 'fine'
+        },
+      });
+      console.log(`permission: ${permission}`);
+      permission = await RNLocation.requestPermission({
+        ios: 'whenInUse',
+        android: {
+          detail: 'coarse',
+          rationale: {
+            title: 'We need to access your location',
+            message: 'We use your location to show where you are on the map',
+            buttonPositive: 'OK',
+            buttonNegative: 'Cancel',
+          },
+        },
+      });
+      console.log(`permission 2: ${permission}`);
+      if (!permission) {
+        await RNLocation.requestPermission({
+          ios: 'whenInUse',
+          android: {
+            detail: 'coarse',
+            rationale: {
+              title: 'We need to access your location',
+              message: 'We use your location to show where you are on the map',
+              buttonPositive: 'OK',
+              buttonNegative: 'Cancel',
+            },
+          },
+        });
+        console.log(`permission 3: ${permission}`);
+        const result = await RNLocation.getLatestLocation({timeout: 100});
+        console.log(result);
+        setLocationData(result);
+      } else {
+        const result = await RNLocation.getLatestLocation({timeout: 100});
+        console.log(result);
+        setLocationData(result);
+      }
+    };
+    permissionHandler()
+      .then(r => setIsDataLoading(false))
+      .catch(error => {
+        console.log(`myError: ${error}`);
+      });
+  }, []);
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.header}>
+      {isDataLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <View>
+          <Text>Latitude: {locationData.latitude}</Text>
+          <Text>Longitude: {locationData.longitude}</Text>
+        </View>
+      )}
     </View>
   );
 };
 
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
-
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  header: {
+    margin: 25,
+    backgroundColor: '#039dfc',
+    height: 200,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
+    borderRadius: 25,
   },
 });
 
