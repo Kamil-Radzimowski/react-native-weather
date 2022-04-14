@@ -16,11 +16,13 @@ import {
   View,
 } from 'react-native';
 import RNLocation from 'react-native-location';
+import config from './config.json';
 
 const App: () => Node = () => {
   const colorScheme = useColorScheme();
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [locationData, setLocationData] = useState({});
+  const apiKey = config.apiKey;
 
   useEffect(() => {
     const permissionHandler = async () => {
