@@ -61,6 +61,17 @@ const getCoordinates = async () => {
   }
 };
 
+const getCurrentDayWeatherData = async (latitude, longitude, key) => {
+  try {
+    const response = await fetch(
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude},${longitude}/today?key=${key}`,
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const App: () => Node = () => {
   const colorScheme = useColorScheme();
   const [isDataLoading, setIsDataLoading] = useState(true);
@@ -70,8 +81,10 @@ const App: () => Node = () => {
   useEffect(() => {
     getCoordinates()
       .then(r => {
-        setLocationData(r);
-        setIsDataLoading(false);
+        getCurrentDayWeatherData(r.latitude, r.longitude).then(responseJSON => {
+          setLocationData(r);
+          setIsDataLoading(false);
+        });
       })
       .catch(error => {
         console.log(`myError: ${error}`);
@@ -83,7 +96,14 @@ const App: () => Node = () => {
       {isDataLoading ? (
         <ActivityIndicator />
       ) : (
-        <View style={{display: 'flex', margin: 10}}>
+        <View
+          style={{
+            display: 'flex',
+            margin: 15,
+            alignContent: 'space-between',
+            flex: 1,
+            height: '100%',
+          }}>
           <View style={styles.headerTop}>
             <Text style={styles.headerTemp}>0 stopni</Text>
             <Text style={styles.headerCity}>Warlubie</Text>
