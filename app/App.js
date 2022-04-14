@@ -6,8 +6,8 @@
  * @flow strict-local
  */
 
-import React, {useEffect, useState} from 'react';
 import type {Node} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -16,7 +16,50 @@ import {
   View,
 } from 'react-native';
 import RNLocation from 'react-native-location';
+// import * as Location from 'expo-location';
 import config from './config.json';
+
+const getCoordinates = async () => {
+  await RNLocation.configure({
+    distanceFilter: 0.0,
+  });
+
+  let permission = await RNLocation.checkPermission({
+    ios: 'whenInUse', // or 'always'
+    android: {
+      detail: 'coarse', // or 'fine'
+    },
+  });
+  permission = await RNLocation.requestPermission({
+    ios: 'whenInUse',
+    android: {
+      detail: 'coarse',
+      rationale: {
+        title: 'We need to access your location',
+        message: 'We use your location to show where you are on the map',
+        buttonPositive: 'OK',
+        buttonNegative: 'Cancel',
+      },
+    },
+  });
+  if (!permission) {
+    await RNLocation.requestPermission({
+      ios: 'whenInUse',
+      android: {
+        detail: 'coarse',
+        rationale: {
+          title: 'We need to access your location',
+          message: 'We use your location to show where you are on the map',
+          buttonPositive: 'OK',
+          buttonNegative: 'Cancel',
+        },
+      },
+    });
+    return await RNLocation.getLatestLocation({ timeout: 100 });
+  } else {
+    return await RNLocation.getLatestLocation({ timeout: 100 });
+  }
+};
 
 const App: () => Node = () => {
   const colorScheme = useColorScheme();
@@ -25,56 +68,11 @@ const App: () => Node = () => {
   const apiKey = config.apiKey;
 
   useEffect(() => {
-    const permissionHandler = async () => {
-      await RNLocation.configure({
-        distanceFilter: 0.0,
-      });
-
-      let permission = await RNLocation.checkPermission({
-        ios: 'whenInUse', // or 'always'
-        android: {
-          detail: 'coarse', // or 'fine'
-        },
-      });
-      console.log(`permission: ${permission}`);
-      permission = await RNLocation.requestPermission({
-        ios: 'whenInUse',
-        android: {
-          detail: 'coarse',
-          rationale: {
-            title: 'We need to access your location',
-            message: 'We use your location to show where you are on the map',
-            buttonPositive: 'OK',
-            buttonNegative: 'Cancel',
-          },
-        },
-      });
-      console.log(`permission 2: ${permission}`);
-      if (!permission) {
-        await RNLocation.requestPermission({
-          ios: 'whenInUse',
-          android: {
-            detail: 'coarse',
-            rationale: {
-              title: 'We need to access your location',
-              message: 'We use your location to show where you are on the map',
-              buttonPositive: 'OK',
-              buttonNegative: 'Cancel',
-            },
-          },
-        });
-        console.log(`permission 3: ${permission}`);
-        const result = await RNLocation.getLatestLocation({timeout: 100});
-        console.log(result);
-        setLocationData(result);
-      } else {
-        const result = await RNLocation.getLatestLocation({timeout: 100});
-        console.log(result);
-        setLocationData(result);
-      }
-    };
-    permissionHandler()
-      .then(r => setIsDataLoading(false))
+    getCoordinates()
+      .then(r => {
+        setLocationData(r);
+        setIsDataLoading(false);
+      })
       .catch(error => {
         console.log(`myError: ${error}`);
       });
@@ -85,7 +83,11 @@ const App: () => Node = () => {
       {isDataLoading ? (
         <ActivityIndicator />
       ) : (
-        <View>
+        <View style={{display: 'flex', margin: 10}}>
+          <View style={styles.headerTop}>
+            <Text style={styles.headerTemp}>0 stopni</Text>
+            <Text style={styles.headerCity}>Warlubie</Text>
+          </View>
           <Text>Latitude: {locationData.latitude}</Text>
           <Text>Longitude: {locationData.longitude}</Text>
         </View>
@@ -102,6 +104,18 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     justifyContent: 'center',
     borderRadius: 25,
+  },
+  headerTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  headerTemp: {
+    fontSize: 25,
+  },
+  headerCity: {
+    fontSize: 18,
   },
 });
 
