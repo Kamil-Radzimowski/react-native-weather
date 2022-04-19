@@ -124,20 +124,15 @@ const App: () => Node = () => {
   }, []);
 
   return (
-    <View>
-      <View style={styles.header}>
-        {isDataLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <LinearGradient
-            colors={gradientMap(weatherData.currentConditions.icon)}
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignContent: 'space-between',
-              flex: 1,
-              height: '100%',
-            }}>
+    // eslint-disable-next-line react-native/no-inline-styles
+    <View style={{backgroundColor: '#ffffff'}}>
+      {isDataLoading ? (
+        <View style={styles.header} />
+      ) : (
+        <LinearGradient
+          colors={gradientMap(weatherData.currentConditions.icon)}
+          style={styles.header}>
+          <View style={styles.headerData}>
             <View style={styles.headerTop}>
               <Text
                 style={styles.headerTemp}
@@ -160,9 +155,9 @@ const App: () => Node = () => {
               icon="weather-windy"
               name={`${weatherData.currentConditions.windspeed} km/h`}
             />
-          </LinearGradient>
-        )}
-      </View>
+          </View>
+        </LinearGradient>
+      )}
       <View>
         {isForecastLoading ? (
           <ActivityIndicator />
@@ -192,6 +187,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  headerData: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignContent: 'space-between',
+    flex: 1,
+    height: '100%',
   },
   headerTemp: {
     fontSize: 25,
