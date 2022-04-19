@@ -38,13 +38,18 @@ const getCurrentDayWeatherData = async (latitude, longitude, key) => {
 const get7daysForecast = async (latitude, longitude, key) => {
   try {
     const response = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude},${longitude}/next5days?&key=${key}&&unitGroup=metric`,
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude},${longitude}/next7days?&key=${key}&&unitGroup=metric`,
     );
     return await response.json();
   } catch (error) {
     console.log(error);
   }
 };
+
+function getDayName(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('pl-PL', {weekday: 'long'});
+}
 
 const latAndLongToAddress = async (latitude, longitude) => {
   try {
