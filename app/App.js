@@ -16,12 +16,13 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import * as coordinates from './getCoordinates.js';
-import * as nameToIcon from './mapNameToIcon.js';
+import * as nameToIcon from './Mapper.js';
 import * as Location from 'expo-location';
 import config from './config.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import {gradientMap} from './Mapper.js';
 
 const getCurrentDayWeatherData = async (latitude, longitude, key) => {
   try {
@@ -60,7 +61,6 @@ const latAndLongToAddress = async (latitude, longitude) => {
   }
 };
 
-
 const IconValuePair = props => {
   return (
     <View
@@ -73,14 +73,16 @@ const IconValuePair = props => {
 
 const ForecastItem = props => {
   return (
-    <View style={styles.forecastItem}>
+    <LinearGradient
+      colors={gradientMap(props.icon)}
+      style={styles.forecastItem}>
       <Text>{`${props.datetime.substring(8, 10)}.${props.datetime.substring(
         5,
         7,
       )}`}</Text>
       <Text>{`${props.temp} ºC`}</Text>
       <Icon name={nameToIcon.map(props.icon)} size={20} />
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -96,7 +98,8 @@ const App: () => Node = () => {
   const apiKey = config.apiKey;
 
   useEffect(() => {
-    coordinates.get()
+    coordinates
+      .get()
       .then(r => {
         getCurrentDayWeatherData(r.latitude, r.longitude, apiKey).then(
           responseJSON => {
@@ -126,10 +129,10 @@ const App: () => Node = () => {
         {isDataLoading ? (
           <ActivityIndicator />
         ) : (
-          <View
+          <LinearGradient
+            colors={gradientMap(weatherData.currentConditions.icon)}
             style={{
               display: 'flex',
-              margin: 20,
               justifyContent: 'space-between',
               alignContent: 'space-between',
               flex: 1,
@@ -157,7 +160,7 @@ const App: () => Node = () => {
               icon="weather-windy"
               name={`${weatherData.currentConditions.windspeed} km/h`}
             />
-          </View>
+          </LinearGradient>
         )}
       </View>
       <View>
@@ -169,7 +172,7 @@ const App: () => Node = () => {
           </ScrollView>
         )}
       </View>
-      <View style={styles.hourlyForecast}></View>
+      <View style={styles.hourlyForecast} />
     </View>
   );
 };
@@ -177,6 +180,7 @@ const App: () => Node = () => {
 const styles = StyleSheet.create({
   header: {
     margin: 25,
+    padding: 20,
     backgroundColor: '#039dfc',
     height: 200,
     alignSelf: 'stretch',
