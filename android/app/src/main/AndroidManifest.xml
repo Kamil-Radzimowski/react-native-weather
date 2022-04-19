@@ -2,8 +2,6 @@
   package="com.weathertestapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESSCOARSELOCATION"/>
-    <uses-permission android:name="android.permission.ACCESSFINELOCATION"/>
 
     <application
       android:name=".MainApplication"

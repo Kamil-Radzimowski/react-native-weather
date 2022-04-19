@@ -10,9 +10,14 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/cli": "^7.0.3",
+    "expo-location": "^14.0.2",
     "react": "17.0.2",
     "react-native": "0.68.1",
-    "react-native-location": "^2.5.0"
+    "react-native-eject": "^0.1.2",
+    "react-native-ionicons": "^4.6.5",
+    "react-native-location": "^2.5.0",
+    "react-native-vector-icons": "^9.1.0"
   },
   "devDependencies": {
     "@babel/core": "7.17.9",

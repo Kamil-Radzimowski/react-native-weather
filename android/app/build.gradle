@@ -264,10 +264,6 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation "com.google.android.gms:play-services-base:16.0.1"
-
-    implementation "com.google.android.gms:play-services-location:16.0.0"
-
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
