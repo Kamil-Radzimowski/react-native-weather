@@ -17,6 +17,7 @@ import {
   View,
 } from 'react-native';
 import * as coordinates from './getCoordinates.js';
+import * as nameToIcon from './mapNameToIcon.js';
 import * as Location from 'expo-location';
 import config from './config.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -78,7 +79,7 @@ const ForecastItem = props => {
         7,
       )}`}</Text>
       <Text>{`${props.temp} ºC`}</Text>
-      <Icon name={}></Icon>
+      <Icon name={nameToIcon.map(props.icon)} size={20} />
     </View>
   );
 };
@@ -195,6 +196,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   forecastItem: {
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
     padding: 8,
     borderRadius: 25,
     marginRight: 15,
