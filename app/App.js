@@ -147,8 +147,8 @@ const App: () => Node = () => {
   }, []);
 
   return (
-    <ScrollView>
-      <View style={{backgroundColor: '#ffffff'}}>
+    <ScrollView style={{height: '100%'}}>
+      <View style={{backgroundColor: '#ffffff', height: '100%'}}>
         {isDataLoading ? (
           <View style={styles.header} />
         ) : (
@@ -160,7 +160,9 @@ const App: () => Node = () => {
                 <Text
                   style={styles.headerTemp}
                   onPress={e => {
-                    degreeUnit === 'F' ? setDegreeUnit('C') : setDegreeUnit('F');
+                    degreeUnit === 'F'
+                      ? setDegreeUnit('C')
+                      : setDegreeUnit('F');
                   }}>
                   {weatherData.currentConditions.temp} º{degreeUnit}
                 </Text>
@@ -249,6 +251,7 @@ const styles = StyleSheet.create({
     margin: 25,
     marginBottom: 0,
     padding: 10,
+    flex: 1,
     flexGrow: 1,
     backgroundColor: '#039dfc',
     borderTopLeftRadius: 25,
