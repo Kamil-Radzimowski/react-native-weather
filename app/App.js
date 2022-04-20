@@ -9,13 +9,13 @@
 import type {Node} from 'react';
 import React, {useEffect, useState} from 'react';
 import {
-  ActivityIndicator,
+  ActivityIndicator, Dimensions,
   ScrollView,
   StyleSheet,
   Text,
   useColorScheme,
   View,
-} from 'react-native';
+} from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import * as coordinates from './getCoordinates.js';
 import * as nameToIcon from './Mapper.js';
@@ -38,7 +38,7 @@ const getCurrentDayWeatherData = async (latitude, longitude, key) => {
 const get7daysForecast = async (latitude, longitude, key) => {
   try {
     const response = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude},${longitude}/next7days?&key=${key}&&unitGroup=metric`,
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude},${longitude}/next7days?&key=${key}&include=hours%2Ccurrent&&unitGroup=metric`,
     );
     return await response.json();
   } catch (error) {
@@ -91,6 +91,24 @@ const ForecastItem = props => {
   );
 };
 
+const HourlyForecastItem = props => {
+  return (
+    <View>
+      <View style={styles.hourlyForecastItem}>
+        <Text>{props.datetime.substring(0, 5)}</Text>
+        <Text>{`${props.temp} ºC`}</Text>
+        <Icon name={nameToIcon.map(props.icon)} size={20}></Icon>
+      </View>
+      <View
+        style={{
+          borderBottomColor: 'white',
+          borderBottomWidth: 1,
+        }}
+      />
+    </View>
+  );
+};
+
 const App: () => Node = () => {
   const colorScheme = useColorScheme();
   const [isDataLoading, setIsDataLoading] = useState(true);
@@ -129,51 +147,62 @@ const App: () => Node = () => {
   }, []);
 
   return (
-    // eslint-disable-next-line react-native/no-inline-styles
-    <View style={{backgroundColor: '#ffffff'}}>
-      {isDataLoading ? (
-        <View style={styles.header} />
-      ) : (
-        <LinearGradient
-          colors={gradientMap(weatherData.currentConditions.icon)}
-          style={styles.header}>
-          <View style={styles.headerData}>
-            <View style={styles.headerTop}>
-              <Text
-                style={styles.headerTemp}
-                onPress={e => {
-                  degreeUnit === 'F' ? setDegreeUnit('C') : setDegreeUnit('F');
-                }}>
-                {weatherData.currentConditions.temp} º{degreeUnit}
-              </Text>
-              {isAddressLoading ? (
-                <ActivityIndicator />
-              ) : (
-                <Text style={styles.headerCity}>{address.city}</Text>
-              )}
-            </View>
-            <IconValuePair
-              icon="water"
-              name={weatherData.currentConditions.humidity}
-            />
-            <IconValuePair
-              icon="weather-windy"
-              name={`${weatherData.currentConditions.windspeed} km/h`}
-            />
-          </View>
-        </LinearGradient>
-      )}
-      <View>
-        {isForecastLoading ? (
-          <ActivityIndicator />
+    <ScrollView>
+      <View style={{backgroundColor: '#ffffff'}}>
+        {isDataLoading ? (
+          <View style={styles.header} />
         ) : (
-          <ScrollView horizontal={true} style={{marginLeft: 25}}>
-            {forecastData.map(ForecastItem)}
-          </ScrollView>
+          <LinearGradient
+            colors={gradientMap(weatherData.currentConditions.icon)}
+            style={styles.header}>
+            <View style={styles.headerData}>
+              <View style={styles.headerTop}>
+                <Text
+                  style={styles.headerTemp}
+                  onPress={e => {
+                    degreeUnit === 'F' ? setDegreeUnit('C') : setDegreeUnit('F');
+                  }}>
+                  {weatherData.currentConditions.temp} º{degreeUnit}
+                </Text>
+                {isAddressLoading ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Text style={styles.headerCity}>{address.city}</Text>
+                )}
+              </View>
+              <IconValuePair
+                icon="water"
+                name={weatherData.currentConditions.humidity}
+              />
+              <IconValuePair
+                icon="weather-windy"
+                name={`${weatherData.currentConditions.windspeed} km/h`}
+              />
+            </View>
+          </LinearGradient>
         )}
+        <View>
+          {isForecastLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <ScrollView horizontal={true} style={{marginLeft: 25}}>
+              {forecastData
+                .splice(1, forecastData.length - 1)
+                .map(ForecastItem)}
+            </ScrollView>
+          )}
+        </View>
+        <View style={styles.hourlyForecast}>
+          {isForecastLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <ScrollView>
+              {forecastData[0].hours.map(HourlyForecastItem)}
+            </ScrollView>
+          )}
+        </View>
       </View>
-      <View style={styles.hourlyForecast} />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -217,12 +246,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#039dfc',
   },
   hourlyForecast: {
-    height: '100%',
     margin: 25,
+    marginBottom: 0,
+    padding: 10,
     flexGrow: 1,
     backgroundColor: '#039dfc',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
+  },
+  hourlyForecastItem: {
+    marginVertical: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
 });
 
