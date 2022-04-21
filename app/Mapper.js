@@ -1,4 +1,4 @@
-const obj= {
+const obj = {
   snow: 'weather-snowy',
   rain: 'weather-pouring',
   fog: 'weather-fog',
@@ -20,12 +20,21 @@ const gradientMapObj = {
   'partly-cloudy-night': ['#062d4f', '#233c4f'],
   'clear-day': ['#1064eb', '#0b97ba'],
   'clear-night': ['#072259', '#07485d'],
+};
+
+export function gradientSum(arr) {
+  return arr.reduce((acc, value) => {
+    gradientMap(value.icon).forEach(value => {
+      acc.push(value);
+    });
+    return acc;
+  }, []);
 }
 
-export function map(name){
+export function map(name) {
   return obj[name];
 }
 
-export function gradientMap(name){
+export function gradientMap(name) {
   return gradientMapObj[name];
 }
