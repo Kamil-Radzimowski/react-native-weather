@@ -56,14 +56,13 @@ function getDayName(dateStr) {
 
 const latAndLongToAddress = async (latitude, longitude) => {
   try {
-    console.log(`latitude: ${latitude}`);
-    console.log(`longitude: ${longitude}`);
-    return await Location.reverseGeocodeAsync({
-      latitude: latitude,
-      longitude: longitude,
-    }).catch(e => {
-      console.log(e);
-    });
+    console.log(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=pl`,
+    );
+    const response = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=pl`,
+    );
+    return await response.json();
   } catch (e) {
     console.log(e);
   }
@@ -140,7 +139,8 @@ const App: () => Node = () => {
           setIsForecastLoading(false);
         });
         latAndLongToAddress(r.latitude, r.longitude).then(responseAddress => {
-          setAddress(responseAddress.city);
+          console.log(`responseAddress: ${responseAddress}`);
+          setAddress(responseAddress);
           setIsAddressLoading(false);
         });
       })
@@ -173,7 +173,7 @@ const App: () => Node = () => {
                   {isAddressLoading ? (
                     <ActivityIndicator />
                   ) : (
-                    <Text style={styles.headerCity}>{address.city}</Text>
+                    <Text style={styles.headerCity}>{address.locality}</Text>
                   )}
                 </View>
                 <IconValuePair
