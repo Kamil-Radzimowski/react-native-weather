@@ -1,11 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import type {Node} from 'react';
 import React, {useEffect, useState} from 'react';
 import {
@@ -19,10 +11,9 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import * as coordinates from './getCoordinates.js';
 import * as nameToIcon from './Mapper.js';
-import * as Location from 'expo-location';
 import config from './config.json';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { gradientMap, gradientSum } from "./Mapper.js";
+import {gradientMap, gradientSum} from './Mapper.js';
 
 const getCurrentDayWeatherData = async (latitude, longitude, key) => {
   try {
