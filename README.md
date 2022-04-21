@@ -9,8 +9,14 @@ Weather app built in react native
 
 ### :city_sunrise: Weather based on location
 
+<img src="screenshots_weather/2.png" alt="drawing" width="200"/>
+
 ### :chart_with_upwards_trend: 7 day forecast
 
+<img src="screenshots_weather/1.png" alt="drawing" width="200"/>
+
 ### :watch: Hourly Forecast
+
+<img src="screenshots_weather/3.png" alt="drawing" width="200"/>
 
 ### :rainbow: Fade effects based on forecast
