@@ -20,3 +20,5 @@ Weather app built in react native
 <img src="screenshots_weather/3.png" alt="drawing" width="200"/>
 
 ### :rainbow: Fade effects based on forecast
+
+<img src="screenshots_weather/4.png" alt="drawing" width="200"/>
