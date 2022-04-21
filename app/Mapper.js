@@ -24,9 +24,12 @@ const gradientMapObj = {
 
 export function gradientSum(arr) {
   return arr.reduce((acc, value) => {
+    /*
     gradientMap(value.icon).forEach(value => {
       acc.push(value);
     });
+     */
+    acc.push(gradientMap(value.icon)[0]);
     return acc;
   }, []);
 }
