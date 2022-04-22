@@ -16,7 +16,11 @@ const App: () => Node = () => {
           name="Main"
           options={{headerShown: false}}
         />
-        <Stack.Screen name="ForecastDetails" component={ForecastDetails} />
+        <Stack.Screen
+          name="ForecastDetails"
+          component={ForecastDetails}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -28,9 +28,6 @@ const getCurrentDayWeatherData = async (latitude, longitude, key) => {
 
 const get7daysForecast = async (latitude, longitude, key) => {
   try {
-    console.log(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude},${longitude}/next7days?&key=${key}&include=hours%2Ccurrent&&unitGroup=metric`,
-    );
     const response = await fetch(
       `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude},${longitude}/next7days?&key=${key}&include=hours%2Ccurrent&&unitGroup=metric`,
     );
@@ -47,9 +44,6 @@ function getDayName(dateStr) {
 
 const latAndLongToAddress = async (latitude, longitude) => {
   try {
-    console.log(
-      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=pl`,
-    );
     const response = await fetch(
       `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=pl`,
     );
@@ -74,7 +68,6 @@ const ForecastItem = (props, navigation) => {
     <TouchableHighlight
       underlayColor="#ffffff"
       onPress={() => {
-        console.log('Click');
         navigation.navigate('ForecastDetails', {date: props.datetime});
       }}>
       <LinearGradient
@@ -126,18 +119,15 @@ export const MainScreen = ({navigation}) => {
       .then(r => {
         getCurrentDayWeatherData(r.latitude, r.longitude, apiKey).then(
           responseJSON => {
-            console.log(responseJSON);
             setWeatherData(responseJSON);
             setIsDataLoading(false);
           },
         );
         get7daysForecast(r.latitude, r.longitude, apiKey).then(responseJSON => {
-          console.log(responseJSON);
           setForecastData(responseJSON.days);
           setIsForecastLoading(false);
         });
         latAndLongToAddress(r.latitude, r.longitude).then(responseAddress => {
-          console.log(`responseAddress: ${responseAddress}`);
           setAddress(responseAddress);
           setIsAddressLoading(false);
         });
