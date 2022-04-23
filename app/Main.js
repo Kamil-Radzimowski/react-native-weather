@@ -17,6 +17,9 @@ import {gradientMap, gradientSum} from './Mapper.js';
 
 const getCurrentDayWeatherData = async (latitude, longitude, key) => {
   try {
+    console.log(
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude},${longitude}/today?key=${key}&&include=current,hours&&unitGroup=metric`,
+    );
     const response = await fetch(
       `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${latitude},${longitude}/today?key=${key}&&include=current,hours&&unitGroup=metric`,
     );
@@ -63,12 +66,16 @@ const IconValuePair = props => {
   );
 };
 
-const ForecastItem = (props, navigation) => {
+const ForecastItem = (props, navigation, longitude, latitude) => {
   return (
     <TouchableHighlight
       underlayColor="#ffffff"
       onPress={() => {
-        navigation.navigate('ForecastDetails', {date: props.datetime});
+        navigation.navigate('ForecastDetails', {
+          date: props.datetime,
+          latitude: latitude,
+          longitude: longitude,
+        });
       }}>
       <LinearGradient
         colors={gradientMap(props.icon)}
@@ -104,6 +111,7 @@ const HourlyForecastItem = props => {
 
 export const MainScreen = ({navigation}) => {
   const colorScheme = useColorScheme();
+  const [latAndLng, setLatAndLng] = useState({});
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [isAddressLoading, setIsAddressLoading] = useState(true);
   const [isForecastLoading, setIsForecastLoading] = useState(true);
@@ -117,20 +125,25 @@ export const MainScreen = ({navigation}) => {
     coordinates
       .get()
       .then(r => {
-        getCurrentDayWeatherData(r.latitude, r.longitude, apiKey).then(
-          responseJSON => {
+        setLatAndLng({latitude: r.latitude, longitude: r.longitude});
+        getCurrentDayWeatherData(r.latitude, r.longitude, apiKey)
+          .then(responseJSON => {
             setWeatherData(responseJSON);
             setIsDataLoading(false);
-          },
-        );
-        get7daysForecast(r.latitude, r.longitude, apiKey).then(responseJSON => {
-          setForecastData(responseJSON.days);
-          setIsForecastLoading(false);
-        });
-        latAndLongToAddress(r.latitude, r.longitude).then(responseAddress => {
-          setAddress(responseAddress);
-          setIsAddressLoading(false);
-        });
+          })
+          .catch(e => console.log(e));
+        get7daysForecast(r.latitude, r.longitude, apiKey)
+          .then(responseJSON => {
+            setForecastData(responseJSON.days);
+            setIsForecastLoading(false);
+          })
+          .catch(e => console.log(e));
+        latAndLongToAddress(r.latitude, r.longitude)
+          .then(responseAddress => {
+            setAddress(responseAddress);
+            setIsAddressLoading(false);
+          })
+          .catch(e => console.log(e));
       })
       .catch(error => {
         console.log(`myError: ${error}`);
@@ -181,7 +194,12 @@ export const MainScreen = ({navigation}) => {
             ) : (
               <ScrollView horizontal={true} style={{marginLeft: 25}}>
                 {forecastData.splice(1, forecastData.length - 1).map(val => {
-                  return ForecastItem(val, navigation);
+                  return ForecastItem(
+                    val,
+                    navigation,
+                    latAndLng.latitude,
+                    latAndLng.longitude,
+                  );
                 })}
               </ScrollView>
             )}
