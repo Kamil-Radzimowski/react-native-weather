@@ -33,10 +33,10 @@ const headerItem = params => {
 const getData = async (lat, long, date, key) => {
   try {
     console.log(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${lat},${long}/${date}?key=${key}&include=hours`,
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${lat},${long}/${date}?key=${key}&include=hours&unitGroup=metric`,
     );
     const response = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${lat},${long}/${date}?key=${key}&include=hours`,
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${lat},${long}/${date}?key=${key}&include=hours&unitGroup=metric`,
     );
     return await response.json();
   } catch (e) {
@@ -58,27 +58,35 @@ export const ForecastDetails = ({navigation, route}) => {
       setData(response.days[0].hours);
       setIsDataLoading(false);
     });
-  });
+  }, [route.params.date, route.params.latitude, route.params.longitude]);
 
   return (
-    <View>
-      {isDataLoading ? (
-        <ActivityIndicator style={styles.centerItem} />
-      ) : (
-        <LinearGradient colors={gradientSum(data)} style={styles.header}>
-          <ScrollView>
-            {data.map(val => {
-              console.log(val);
-              return headerItem(val);
-            })}
-          </ScrollView>
-        </LinearGradient>
-      )}
+    <View style={{flex: 1}}>
+      <Text style={styles.Text}>{route.params.date}</Text>
+      <ScrollView>
+        {isDataLoading ? (
+          <ActivityIndicator style={styles.centerItem} />
+        ) : (
+          <LinearGradient colors={gradientSum(data)} style={styles.header}>
+            <ScrollView>
+              {data.map(val => {
+                console.log(val);
+                return headerItem(val);
+              })}
+            </ScrollView>
+          </LinearGradient>
+        )}
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  Text: {
+    margin: 15,
+    alignSelf: 'center',
+    color: '#444444',
+  },
   header: {
     margin: 25,
     padding: 10,

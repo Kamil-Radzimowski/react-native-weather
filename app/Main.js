@@ -40,11 +40,6 @@ const get7daysForecast = async (latitude, longitude, key) => {
   }
 };
 
-function getDayName(dateStr) {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('pl-PL', {weekday: 'long'});
-}
-
 const latAndLongToAddress = async (latitude, longitude) => {
   try {
     const response = await fetch(
@@ -197,8 +192,8 @@ export const MainScreen = ({navigation}) => {
                   return ForecastItem(
                     val,
                     navigation,
-                    latAndLng.latitude,
                     latAndLng.longitude,
+                    latAndLng.latitude,
                   );
                 })}
               </ScrollView>

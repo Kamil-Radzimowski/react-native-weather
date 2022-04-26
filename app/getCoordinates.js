@@ -36,8 +36,8 @@ export async function get() {
         },
       },
     });
-    return await RNLocation.getLatestLocation({ timeout: 100 });
+    return await RNLocation.getLatestLocation({timeout: 100});
   } else {
-    return await RNLocation.getLatestLocation({ timeout: 100 });
+    return await RNLocation.getLatestLocation({timeout: 100});
   }
 }
