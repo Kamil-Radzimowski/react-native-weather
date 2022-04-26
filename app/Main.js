@@ -7,6 +7,7 @@ import {
   TouchableHighlight,
   useColorScheme,
   View,
+  ImageBackground,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import * as coordinates from './getCoordinates.js';
@@ -148,6 +149,7 @@ export const MainScreen = ({navigation}) => {
   return (
     <View style={{height: '100%', backgroundColor: '#ffffff'}}>
       <ScrollView>
+        {/* Main header */}
         <View>
           {isDataLoading ? (
             <View style={styles.header} />
@@ -155,6 +157,15 @@ export const MainScreen = ({navigation}) => {
             <LinearGradient
               colors={gradientMap(weatherData.currentConditions.icon)}
               style={styles.header}>
+              {/* Background Icon */}
+              <View style={styles.headerBackgroundIcon}>
+                <Icon
+                  size={150}
+                  name={nameToIcon.map(
+                    weatherData.currentConditions.icon,
+                  )}></Icon>
+              </View>
+              {/* Main Data of header */}
               <View style={styles.headerData}>
                 <View style={styles.headerTop}>
                   <Text
@@ -172,10 +183,12 @@ export const MainScreen = ({navigation}) => {
                     <Text style={styles.headerCity}>{address.locality}</Text>
                   )}
                 </View>
+                {/* Header Humidity */}
                 <IconValuePair
                   icon="water"
                   name={weatherData.currentConditions.humidity}
                 />
+                {/* Header WindSpeed */}
                 <IconValuePair
                   icon="weather-windy"
                   name={`${weatherData.currentConditions.windspeed} km/h`}
@@ -183,6 +196,7 @@ export const MainScreen = ({navigation}) => {
               </View>
             </LinearGradient>
           )}
+          {/* Forecast horizontal list */}
           <View>
             {isForecastLoading ? (
               <ActivityIndicator />
@@ -199,6 +213,7 @@ export const MainScreen = ({navigation}) => {
               </ScrollView>
             )}
           </View>
+          {/* Hourly Forecast list */}
           {isForecastLoading ? (
             <ActivityIndicator style={{height: '100%'}} />
           ) : (
@@ -225,6 +240,11 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     justifyContent: 'center',
     borderRadius: 25,
+  },
+  headerBackgroundIcon: {
+    position: 'absolute',
+    bottom: -35,
+    right: -35,
   },
   headerTop: {
     display: 'flex',
